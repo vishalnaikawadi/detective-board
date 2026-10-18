@@ -1,0 +1,339 @@
+.home {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0 clamp(20px, 5vw, 64px) 80px;
+  background:
+    radial-gradient(ellipse 70% 50% at 85% -10%, rgba(47, 107, 255, 0.35), transparent 60%),
+    radial-gradient(ellipse 60% 50% at -10% 30%, rgba(27, 49, 117, 0.6), transparent 60%),
+    linear-gradient(180deg, var(--navy-850), var(--ink) 70%);
+}
+
+/* Comic-style halftone dots and light streaks, after the reference art. */
+.home__bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.home__halftone {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  background-image: radial-gradient(circle, currentColor 1.2px, transparent 1.6px);
+  background-size: 10px 10px;
+}
+.home__halftone--tl {
+  top: -120px;
+  left: -120px;
+  color: rgba(255, 46, 126, 0.55);
+  mask-image: radial-gradient(circle at 25% 25%, #000, transparent 60%);
+}
+.home__halftone--br {
+  right: -140px;
+  bottom: -160px;
+  width: 640px;
+  height: 640px;
+  color: rgba(74, 163, 255, 0.4);
+  mask-image: radial-gradient(circle at 70% 70%, #000, transparent 62%);
+}
+.home__streaks {
+  position: absolute;
+  inset: -20%;
+  background:
+    linear-gradient(-28deg, transparent 49.85%, rgba(200, 230, 255, 0.22) 50%, transparent 50.15%),
+    linear-gradient(-24deg, transparent 49.9%, rgba(200, 230, 255, 0.12) 50%, transparent 50.1%),
+    linear-gradient(-31deg, transparent 49.92%, rgba(140, 200, 255, 0.14) 50%, transparent 50.08%);
+  background-position: 30% -10%, 55% 10%, 10% 20%;
+  background-repeat: no-repeat;
+}
+
+.home__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #15296a, #0a1336);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 0 24px -4px rgba(74, 163, 255, 0.5);
+}
+.brand__mark svg {
+  width: 24px;
+  height: 24px;
+}
+.brand__name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.home__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(10, 19, 50, 0.5);
+}
+.home__status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--blue-400);
+  box-shadow: 0 0 10px var(--blue-400);
+}
+
+.hero {
+  position: relative;
+  max-width: 760px;
+  margin: 40px 0 44px;
+  padding: 26px 30px;
+  animation: rise 0.5s ease-out;
+}
+.hero h1 {
+  margin: 12px 0 10px;
+  font-size: clamp(38px, 5.2vw, 64px);
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(90deg, var(--blue-300), var(--blue-500) 60%, var(--magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero p {
+  margin: 0;
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.viewfinder {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: var(--blue-300);
+  border-style: solid;
+  opacity: 0.8;
+}
+.viewfinder--tl {
+  top: 0;
+  left: 0;
+  border-width: 2px 0 0 2px;
+}
+.viewfinder--br {
+  right: 0;
+  bottom: 0;
+  border-width: 0 2px 2px 0;
+}
+
+/* ---- Grid --------------------------------------------------------------- */
+
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(20, 36, 86, 0.75), rgba(10, 19, 50, 0.8));
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.9);
+  overflow: visible;
+  animation: rise 0.45s ease-out backwards;
+  transition: transform 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: 0 26px 50px -24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(74, 163, 255, 0.12), 0 0 40px -12px rgba(47, 107, 255, 0.45);
+}
+.card__open {
+  display: block;
+  padding: 10px 10px 0;
+}
+.card__body {
+  padding: 14px 18px 16px;
+}
+.card__meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-mute);
+}
+.card__case {
+  color: var(--blue-400);
+}
+.card__name {
+  margin: 6px 0 8px;
+  font-size: 17px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.card__rename {
+  width: 100%;
+  margin: 3px 0 5px;
+  padding: 4px 8px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--blue-400);
+  background: rgba(5, 10, 28, 0.6);
+  outline: none;
+}
+.card__dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.card__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-mute);
+}
+.card__menu {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.card:hover .card__menu,
+.card__menu:focus-within,
+.card__menu:has([aria-expanded='true']) {
+  opacity: 1;
+}
+
+.thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 11px;
+  overflow: hidden;
+  background-color: #101b3a;
+  box-shadow: inset 0 0 0 1px rgba(140, 200, 255, 0.08);
+}
+.thumb .world {
+  pointer-events: none;
+}
+.thumb__empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+.thumb__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 40%, transparent 50%, rgba(3, 7, 22, 0.55));
+}
+
+/* ---- New board cell ----------------------------------------------------- */
+
+.card--new {
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 280px;
+  background: rgba(10, 19, 50, 0.35);
+  border: 1px dashed rgba(140, 200, 255, 0.3);
+  color: var(--text-dim);
+}
+.card--new:hover {
+  color: var(--text);
+  background: rgba(20, 40, 100, 0.35);
+}
+.card--new__corners,
+.card--new__corners::before,
+.card--new__corners::after {
+  position: absolute;
+  inset: 14px;
+  pointer-events: none;
+}
+.card--new__corners {
+  border-radius: 6px;
+  background:
+    linear-gradient(var(--blue-300), var(--blue-300)) top left / 18px 2px,
+    linear-gradient(var(--blue-300), var(--blue-300)) top left / 2px 18px,
+    linear-gradient(var(--blue-300), var(--blue-300)) top right / 18px 2px,
+    linear-gradient(var(--blue-300), var(--blue-300)) top right / 2px 18px,
+    linear-gradient(var(--blue-300), var(--blue-300)) bottom left / 18px 2px,
+    linear-gradient(var(--blue-300), var(--blue-300)) bottom left / 2px 18px,
+    linear-gradient(var(--blue-300), var(--blue-300)) bottom right / 18px 2px,
+    linear-gradient(var(--blue-300), var(--blue-300)) bottom right / 2px 18px;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  transition: inset 0.2s ease, opacity 0.2s;
+}
+.card--new:hover .card--new__corners {
+  inset: 10px;
+  opacity: 1;
+}
+.card--new__plus {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  color: #fff;
+  background: radial-gradient(circle at 35% 30%, #5d95ff, #2558e6 70%);
+  box-shadow: 0 0 0 8px rgba(47, 107, 255, 0.12), 0 12px 30px -8px rgba(47, 107, 255, 0.8);
+  transition: transform 0.2s ease, box-shadow 0.2s;
+}
+.card--new:hover .card--new__plus {
+  transform: scale(1.06) rotate(90deg);
+  box-shadow: 0 0 0 12px rgba(47, 107, 255, 0.14), 0 14px 34px -8px rgba(47, 107, 255, 0.9);
+}
+.card--new__label {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+.card--new__sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}

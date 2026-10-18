@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 330" width="380" height="330">
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1e8d3"/>
+      <stop offset="1" stop-color="#ddd0b2"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="0" x2="1">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/>
+      <stop offset="0.48" stop-color="#000" stop-opacity="0.08"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.35"/>
+      <stop offset="0.52" stop-color="#000" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="area"><rect x="19" y="18" width="342" height="251"/></clipPath>
+  </defs>
+  <rect x="2" y="2" width="376" height="326" rx="3" fill="url(#paper)"/>
+  <g clip-path="url(#area)">
+    <rect x="19" y="18" width="342" height="251" fill="#e6dcc4"/>
+    <path d="M-10 230 C 80 200, 140 230, 200 180 S 330 120, 400 140" stroke="#b9c3c3" stroke-width="30" fill="none" opacity="0.7"/>
+    <g stroke="#fbf6ea" stroke-linecap="round" fill="none">
+      <path d="M20 70 L360 50" stroke-width="10"/>
+      <path d="M20 150 L360 170" stroke-width="7"/>
+      <path d="M110 18 L130 270" stroke-width="9"/>
+      <path d="M250 18 L230 270" stroke-width="6"/>
+      <path d="M20 250 L180 18" stroke-width="5"/>
+      <path d="M300 18 L360 120" stroke-width="5"/>
+    </g>
+    <g stroke="#a99d84" stroke-width="1" fill="none" opacity="0.8">
+      <path d="M20 70 L360 50"/><path d="M20 150 L360 170"/><path d="M110 18 L130 270"/>
+    </g>
+    <rect x="150" y="85" width="60" height="45" fill="#cdd6bd" opacity="0.8"/>
+  </g>
+  <rect x="19" y="18" width="342" height="251" fill="none" stroke="#7b6c52" stroke-width="1.4"/>
+  <path d="M168 104 C 172 82, 214 78, 222 100 C 230 122, 196 136, 178 128 C 162 120, 160 102, 176 94" stroke="#d11a2a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="194" cy="108" r="5" fill="#d11a2a"/>
+  <rect x="2" y="2" width="376" height="326" fill="url(#fold)"/>
+  <rect x="24" y="284" width="190" height="10" rx="2" fill="#4a3c2b" opacity="0.75"/>
+  <rect x="24" y="302" width="120" height="7" rx="2" fill="#4a3c2b" opacity="0.4"/>
+</svg>
