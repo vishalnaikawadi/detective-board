@@ -984,3 +984,31 @@ textarea.folder-label__text {
   font-size: inherit;
   float: none;
 }
+
+.slot-busy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3cqw;
+  font-family: var(--font-ui);
+  font-size: 4.6cqw;
+  color: var(--blue-300);
+  text-align: center;
+}
+.slot-spinner {
+  width: 9cqw;
+  height: 9cqw;
+  border-radius: 50%;
+  border: 0.9cqw solid rgba(140, 200, 255, 0.25);
+  border-top-color: var(--blue-300);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.slot-error {
+  text-align: center;
+  line-height: 1.3;
+}

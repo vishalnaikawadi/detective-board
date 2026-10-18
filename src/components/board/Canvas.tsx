@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 
 import type * as React from 'react'
 import { makeElement } from '../../lib/elements'
 import { clamp, MAX_ZOOM, MIN_ZOOM, parseEndpointKey, rotate, sameEndpoint, screenToWorld, worldToScreen } from '../../lib/geometry'
-import { isImageFile, storeImage } from '../../lib/images'
+import { isHeic, isImageFile, storeImage } from '../../lib/images'
 import { CORK_TILE, corkTexture } from '../../lib/texture'
 import { nextZ, ops, useBoards, type Snapshot } from '../../store/boards'
 import { useEditor } from '../../store/editor'
@@ -295,12 +295,20 @@ export function Canvas({ board, vp, setVp, containerRef }: Props) {
     const z = () => nextZ(useBoards.getState().boards[boardId].elements)
     const images = files.filter(isImageFile)
     const docs = files.filter((f) => !isImageFile(f))
+    if (images.some(isHeic)) useEditor.getState().showToast('Developing iPhone photos…')
+    let failed = 0
     for (const [i, file] of images.entries()) {
-      const imageId = await storeImage(file)
-      const el = { ...makeElement('photo', variants.photo, { x: at.x + i * 40, y: at.y + i * 40 }, z()), imageId }
-      useBoards.getState().update(boardId, ops.add(el))
-      useEditor.getState().select(el.id)
+      try {
+        const imageId = await storeImage(file)
+        const el = { ...makeElement('photo', variants.photo, { x: at.x + i * 40, y: at.y + i * 40 }, z()), imageId }
+        useBoards.getState().update(boardId, ops.add(el))
+        useEditor.getState().select(el.id)
+      } catch {
+        failed++
+      }
     }
+    if (failed) useEditor.getState().showToast(`${failed} photo${failed > 1 ? 's' : ''} couldn’t be read`)
+    else if (images.some(isHeic)) useEditor.getState().showToast(null)
     if (docs.length) {
       const offset = images.length ? 300 : 0
       const folder = makeElement('folder', variants.folder, { x: at.x + offset, y: at.y }, z())

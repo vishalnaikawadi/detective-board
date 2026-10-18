@@ -5,25 +5,68 @@ import { uid } from './id'
 const MAX_DIM = 1600
 const urlCache = new Map<string, string>()
 
-/** Downscale large photos before storing them, so IndexedDB stays lean. */
-async function shrink(file: Blob): Promise<Blob> {
-  try {
-    const bmp = await createImageBitmap(file)
-    const scale = Math.min(1, MAX_DIM / Math.max(bmp.width, bmp.height))
-    if (scale === 1 && file.size < 1.5e6) return file
-    const canvas = document.createElement('canvas')
-    canvas.width = Math.round(bmp.width * scale)
-    canvas.height = Math.round(bmp.height * scale)
-    canvas.getContext('2d')!.drawImage(bmp, 0, 0, canvas.width, canvas.height)
-    return await new Promise((res) => canvas.toBlob((b) => res(b ?? file), 'image/jpeg', 0.88))
-  } catch {
-    return file
+const HEIC_EXT = /\.(heic|heif)$/i
+
+/** iPhone photos (HEIC/HEIF). Some browsers report an empty MIME type, so check the name too. */
+export function isHeic(file: Blob) {
+  return /^image\/hei[cf]/i.test(file.type) || HEIC_EXT.test((file as File).name ?? '')
+}
+
+export function isImageFile(f: File) {
+  return f.type.startsWith('image/') || HEIC_EXT.test(f.name)
+}
+
+/** File-picker filter for photos, listing HEIC explicitly so it's selectable everywhere. */
+export const IMAGE_ACCEPT = 'image/*,.heic,.heif'
+
+export class UnreadableImageError extends Error {
+  constructor(heic: boolean) {
+    super(heic ? 'Couldn’t read that HEIC photo — try exporting it as JPEG.' : 'That file isn’t an image this browser can read.')
   }
 }
 
+/**
+ * Decode any supported photo into something every browser can display.
+ * Only Safari decodes HEIC natively, so elsewhere it's converted to JPEG with
+ * libheif (WebAssembly), which is downloaded on first use only.
+ */
+async function decode(file: Blob): Promise<ImageBitmap> {
+  try {
+    return await createImageBitmap(file)
+  } catch {
+    if (!isHeic(file)) throw new UnreadableImageError(false)
+  }
+  try {
+    const { heicTo } = await import('heic-to')
+    const jpeg = await heicTo({ blob: file, type: 'image/jpeg', quality: 0.92 })
+    return await createImageBitmap(jpeg)
+  } catch {
+    throw new UnreadableImageError(true)
+  }
+}
+
+/** Downscale large photos (and re-encode HEIC) before storing them, so IndexedDB stays lean. */
+async function normalize(file: Blob): Promise<Blob> {
+  const bmp = await decode(file)
+  const scale = Math.min(1, MAX_DIM / Math.max(bmp.width, bmp.height))
+  if (scale === 1 && file.size < 1.5e6 && !isHeic(file)) {
+    bmp.close()
+    return file
+  }
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(bmp.width * scale)
+  canvas.height = Math.round(bmp.height * scale)
+  canvas.getContext('2d')!.drawImage(bmp, 0, 0, canvas.width, canvas.height)
+  bmp.close()
+  const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/jpeg', 0.88))
+  if (!blob) throw new UnreadableImageError(isHeic(file))
+  return blob
+}
+
+/** Store a photo for an element. Throws `UnreadableImageError` if it can't be decoded. */
 export async function storeImage(file: Blob): Promise<string> {
   const id = uid('img')
-  const blob = await shrink(file)
+  const blob = await normalize(file)
   await db.putImage(id, blob)
   urlCache.set(id, URL.createObjectURL(blob))
   return id
@@ -49,10 +92,6 @@ export function useImageUrl(imageId?: string, fallbackUrl?: string): string | un
   }, [imageId])
 
   return imageId ? url : fallbackUrl
-}
-
-export function isImageFile(f: File) {
-  return f.type.startsWith('image/')
 }
 
 /** Make sure uploaded photos have object URLs before a synchronous render (e.g. export). */

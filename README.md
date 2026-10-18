@@ -179,5 +179,6 @@ Please keep the zero-backend, local-first approach, and match the existing code 
 
 ## License
 
-<!-- TODO: choose a license (e.g. MIT) and add a LICENSE file. -->
-No license has been chosen yet. Until one is added, all rights are reserved by the author.
+[MIT](LICENSE) © 2026 vishalnaikawadi
+
+The artwork in `public/assets/` (photo frames, notes, papers, folder) is original work by the author and is released under the same MIT license. Fonts are from [Fontsource](https://fontsource.org) under their own open licenses (SIL OFL). Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.

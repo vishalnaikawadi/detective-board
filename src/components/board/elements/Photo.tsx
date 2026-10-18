@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { getVariant, regionStyle } from '../../../lib/catalog'
-import { storeImage, useImageUrl } from '../../../lib/images'
+import { IMAGE_ACCEPT, isHeic, storeImage, UnreadableImageError, useImageUrl } from '../../../lib/images'
 import { normalizeUrl } from '../../../lib/linkPreview'
 import type { PhotoElement } from '../../../types'
 import { Icon } from '../../ui/Icons'
@@ -67,6 +67,8 @@ function PhotoPicker({ el, failed }: { el: PhotoElement; failed: boolean }) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [urlMode, setUrlMode] = useState(false)
   const [draft, setDraft] = useState('')
+  const [busy, setBusy] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   if (!boardId) return <div className="photo-slot__mark"><Icon name="camera" /></div>
 
@@ -82,16 +84,30 @@ function PhotoPicker({ el, failed }: { el: PhotoElement; failed: boolean }) {
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept={IMAGE_ACCEPT}
         hidden
         onChange={async (e) => {
           const file = e.target.files?.[0]
+          e.target.value = ''
           if (!file) return
-          const imageId = await storeImage(file)
-          patchElement(boardId, el.id, { imageId, imageUrl: undefined })
+          setError(null)
+          setBusy(isHeic(file) ? 'Developing iPhone photo…' : 'Developing photo…')
+          try {
+            const imageId = await storeImage(file)
+            patchElement(boardId, el.id, { imageId, imageUrl: undefined })
+          } catch (err) {
+            setError(err instanceof UnreadableImageError ? err.message : 'Couldn’t add that photo.')
+          } finally {
+            setBusy(null)
+          }
         }}
       />
-      {urlMode ? (
+      {busy ? (
+        <div className="slot-busy">
+          <span className="slot-spinner" />
+          {busy}
+        </div>
+      ) : urlMode ? (
         <form
           className="slot-form"
           onSubmit={(e) => {
@@ -118,7 +134,7 @@ function PhotoPicker({ el, failed }: { el: PhotoElement; failed: boolean }) {
       ) : (
         <>
           <div className="photo-slot__mark"><Icon name="camera" /></div>
-          {failed && <div className="slot-error">Image couldn't load</div>}
+          {(error || failed) && <div className="slot-error">{error ?? 'Image couldn’t load'}</div>}
           <button className="slot-btn" onClick={() => fileRef.current?.click()}>
             <Icon name="upload" /> Upload
           </button>

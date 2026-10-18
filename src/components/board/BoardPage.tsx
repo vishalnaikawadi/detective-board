@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getVariant } from '../../lib/catalog'
 import { makeElement } from '../../lib/elements'
 import { clamp, fitViewport, MAX_ZOOM, MIN_ZOOM, screenToWorld } from '../../lib/geometry'
-import { isImageFile, storeImage } from '../../lib/images'
+import { isImageFile, storeImage, UnreadableImageError } from '../../lib/images'
 import { normalizeUrl } from '../../lib/linkPreview'
 import { navigate } from '../../lib/router'
 import { nextZ, ops, useBoards } from '../../store/boards'
@@ -44,8 +44,7 @@ function BoardEditor({ id }: { id: string }) {
   const [vp, setVpState] = useState<Viewport>(board.viewport)
   const vpRef = useRef(vp)
   vpRef.current = vp
-  const [hint, setHint] = useState<string | null>(null)
-  const { mode, threadFrom, dockDrag } = useEditor()
+  const { mode, threadFrom, dockDrag, toast: hint, showToast: setHint } = useEditor()
   const [exporting, setExporting] = useState(false)
   const [isNew] = useState(() => board.elements.length === 0 && Date.now() - board.createdAt < 5000)
 
@@ -66,9 +65,9 @@ function BoardEditor({ id }: { id: string }) {
 
   useEffect(() => {
     if (!hint) return
-    const t = setTimeout(() => setHint(null), 2200)
+    const t = setTimeout(() => setHint(null), 2800)
     return () => clearTimeout(t)
-  }, [hint])
+  }, [hint, setHint])
 
   const size = () => {
     const r = containerRef.current?.getBoundingClientRect()
@@ -225,8 +224,12 @@ function BoardEditor({ id }: { id: string }) {
       const variants = useEditor.getState().variantChoice
       if (file) {
         e.preventDefault()
-        const imageId = await storeImage(file)
-        return place({ ...makeElement('photo', variants.photo, centerWorld(), z()), imageId } as BoardElement)
+        try {
+          const imageId = await storeImage(file)
+          return place({ ...makeElement('photo', variants.photo, centerWorld(), z()), imageId } as BoardElement)
+        } catch (err) {
+          return useEditor.getState().showToast(err instanceof UnreadableImageError ? err.message : 'Couldn’t paste that image')
+        }
       }
       const url = normalizeUrl(e.clipboardData?.getData('text') ?? '')
       if (url && /^https?:\/\//i.test(e.clipboardData?.getData('text').trim() ?? '')) {

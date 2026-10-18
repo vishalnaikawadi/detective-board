@@ -28,6 +28,8 @@ interface EditorState {
   zoom: number
   /** Folder whose file picker should open (set by toolbar / menu commands). */
   filePickFor: string | null
+  /** Short status message shown above the dock. */
+  toast: string | null
 
   select: (id: string | null) => void
   selectThread: (id: string | null) => void
@@ -41,6 +43,7 @@ interface EditorState {
   chooseVariant: (type: ElementType, variant: string) => void
   setZoom: (zoom: number) => void
   requestFilePick: (id: string | null) => void
+  showToast: (message: string | null) => void
   reset: () => void
 }
 
@@ -66,6 +69,7 @@ export const useEditor = create<EditorState>()((set, get) => ({
   variantChoice: loadVariantChoice(),
   zoom: 1,
   filePickFor: null,
+  toast: null,
 
   select: (id) => set({ selectedId: id, selectedThreadId: null, editingId: get().editingId === id ? id : null }),
   selectThread: (id) => set({ selectedThreadId: id, selectedId: null, editingId: null }),
@@ -83,6 +87,7 @@ export const useEditor = create<EditorState>()((set, get) => ({
   },
   setZoom: (zoom) => set({ zoom }),
   requestFilePick: (id) => set({ filePickFor: id }),
+  showToast: (toast) => set({ toast }),
   reset: () =>
     set({ selectedId: null, selectedThreadId: null, editingId: null, mode: 'select', threadFrom: null, contextMenu: null, dockDrag: null }),
 }))
