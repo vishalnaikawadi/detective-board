@@ -1,0 +1,49 @@
+name: Build for Hostinger
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hostinger-production
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production site
+        run: npm run build
+
+      - name: Publish static files
+        env:
+          DEPLOY_BRANCH: hostinger
+        run: |
+          cp -R dist "$RUNNER_TEMP/hostinger-site"
+          git checkout --orphan "$DEPLOY_BRANCH"
+          git rm -rf .
+          rm -rf node_modules dist
+          cp -R "$RUNNER_TEMP/hostinger-site"/. .
+          touch .nojekyll
+          git add -A
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "Deploy ${GITHUB_SHA}"
+          git push --force origin "$DEPLOY_BRANCH"
