@@ -4,6 +4,10 @@ Build your own conspiracy wall in the browser. Pin up photos, clip newspaper art
 
 Caseboard runs entirely in your browser: no account, no backend. Every board is saved locally in IndexedDB.
 
+**▶ Try it live: [caseboard.myselfvishal.dev](https://caseboard.myselfvishal.dev/)**
+
+![A Caseboard board, "Daman Bike Trip": Polaroid photos, sticky notes, a lined note, a case folder, a newspaper clipping and a map of Bhandardara, linked with red thread](docs/screenshot.webp)
+
 ## Features
 
 - **Multiple boards.** The home screen shows a grid of your cases with live thumbnails. Rename or delete them, or open a fresh one with **Add new board**.
@@ -19,6 +23,10 @@ Caseboard runs entirely in your browser: no account, no backend. Every board is 
 - **PNG export** of the whole board or the current view, at 2× resolution.
 
 ## Quick start
+
+Just want to play? Open the [live demo](https://caseboard.myselfvishal.dev/). Your boards stay in your own browser.
+
+To run it locally:
 
 Requirements: [Node.js](https://nodejs.org/) **20.19+** or **22.12+**, and npm.
 
